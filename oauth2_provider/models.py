@@ -73,11 +73,11 @@ class AbstractApplication(models.Model):
     GRANT_CLIENT_CREDENTIALS = "client-credentials"
     GRANT_OPENID_HYBRID = "openid-hybrid"
     GRANT_TYPES = (
-        (GRANT_AUTHORIZATION_CODE, _("Authorization code")),
-        (GRANT_IMPLICIT, _("Implicit")),
-        (GRANT_PASSWORD, _("Resource owner password-based")),
-        (GRANT_CLIENT_CREDENTIALS, _("Client credentials")),
-        (GRANT_OPENID_HYBRID, _("OpenID connect hybrid")),
+        (GRANT_AUTHORIZATION_CODE, _("Authorization code (Recommended for SPA and Mobile Clients, see: https://oauth.net/2/grant-types/authorization-code/)")),
+        (GRANT_CLIENT_CREDENTIALS, _("Client credentials (Recommended for Machine to Machine APIs, see: https://oauth.net/2/grant-types/client-credentials/)")),
+        (GRANT_IMPLICIT, _("Implicit (Legacy, not recommended. see: https://oauth.net/2/grant-types/implicit/)")),
+        (GRANT_PASSWORD, _("Resource owner password-based (Legacy, not recommended. see: https://oauth.net/2/grant-types/password/")),
+        (GRANT_OPENID_HYBRID, _("OpenID connect hybrid (Legacy, not recommended. see: https://openid.net/specs/openid-connect-core-1_0.html#HybridFlowAuth ) ")),
     )
 
     NO_ALGORITHM = ""
@@ -90,21 +90,8 @@ class AbstractApplication(models.Model):
     )
 
     id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=255, blank=True)
     client_id = models.CharField(max_length=100, unique=True, default=generate_client_id, db_index=True)
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        related_name="%(app_label)s_%(class)s",
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
-
-    redirect_uris = models.TextField(
-        blank=True,
-        help_text=_("Allowed URIs list, space separated"),
-    )
-    client_type = models.CharField(max_length=32, choices=CLIENT_TYPES)
-    authorization_grant_type = models.CharField(max_length=32, choices=GRANT_TYPES)
     client_secret = ClientSecretField(
         max_length=255,
         blank=True,
@@ -112,12 +99,24 @@ class AbstractApplication(models.Model):
         db_index=True,
         help_text=_("Hashed on Save. Copy it now if this is a new secret."),
     )
-    name = models.CharField(max_length=255, blank=True)
-    skip_authorization = models.BooleanField(default=False)
-
+    client_type = models.CharField(max_length=32, choices=CLIENT_TYPES, help_text="Use confidential for server to server scenarios, use public for mobile or web browser clients. see: https://datatracker.ietf.org/doc/html/rfc6749#section-2.1")
+    authorization_grant_type = models.CharField(max_length=32, choices=GRANT_TYPES, help_text="see: https://oauth.net/2/grant-types/")
+    algorithm = models.CharField("OIDC JWT Signing Algorithm", max_length=5, choices=ALGORITHM_TYPES, default=NO_ALGORITHM, blank=True, help_text="Enable OIDC and set the default signing algorithm. `RSA with SHA-2 256` is the recommended signing algorithm.")
+    user = models.ForeignKey("Owner",
+        settings.AUTH_USER_MODEL,
+        related_name="%(app_label)s_%(class)s",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+    )
+    redirect_uris = models.TextField(
+        blank=True,
+        help_text=_("Allowed URIs list, space separated"),
+    )    
+    skip_authorization = models.BooleanField(default=False, help_text="Only prompt users for permission authorization on sign up, otherwise prompts users to authorize scopes on every login.")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    algorithm = models.CharField(max_length=5, choices=ALGORITHM_TYPES, default=NO_ALGORITHM, blank=True)
+    
 
     class Meta:
         abstract = True
