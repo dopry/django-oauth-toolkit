@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
-* Support for Django 5.2
-* Support for Python 3.14 (Django >= 5.2.8)
+* #1608 Support for Django 5.2
+* #1608 Support for Python 3.14 (Django >= 5.2.8)
+* #1545 Support for OIDC Back-Channel Logout
 
+<!--
 <!--
 ### Changed
 ### Deprecated
