@@ -33,8 +33,11 @@ def send_backchannel_logout_request(id_token, *args, **kwargs):
     if id_token.application.algorithm == AbstractApplication.NO_ALGORITHM:
         raise BackchannelLogoutRequestError("Application must provide signing algorithm")
 
-    if id_token.application.backchannel_logout_uri is None:
+    if not id_token.application.backchannel_logout_uri:
         raise BackchannelLogoutRequestError("URL for backchannel logout not provided by client")
+
+    if not oauth2_settings.OIDC_ISS_ENDPOINT:
+        raise BackchannelLogoutRequestError("OIDC_ISS_ENDPOINT is not set")
 
     try:
         issued_at = timezone.now()
@@ -42,7 +45,7 @@ def send_backchannel_logout_request(id_token, *args, **kwargs):
 
         claims = {
             "iss": oauth2_settings.OIDC_ISS_ENDPOINT,
-            "sub": str(id_token.user.id),
+            "sub": str(id_token.user.pk),
             "aud": str(id_token.application.client_id),
             "iat": int(issued_at.timestamp()),
             "exp": int(expiration_date.timestamp()),
@@ -91,6 +94,7 @@ def on_user_logged_out_maybe_send_backchannel_logout(sender, **kwargs):
     id_tokens = (
         IDToken.objects.filter(user=user, application__backchannel_logout_uri__isnull=False, expires__gt=now)
         .exclude(scope__icontains="offline_access")
+        .exclude(application__backchannel_logout_uri="")
         .select_related("application")
         .order_by("application", "-expires")
     )

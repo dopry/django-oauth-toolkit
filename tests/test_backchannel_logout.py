@@ -5,7 +5,7 @@ import pytest
 import requests
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.test import RequestFactory, override_settings
+from django.test import RequestFactory
 from django.urls import reverse
 
 from oauth2_provider.exceptions import BackchannelLogoutRequestError
