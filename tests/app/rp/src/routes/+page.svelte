@@ -1,5 +1,6 @@
 <script>
 	import { browser } from '$app/environment';
+	import { getContext, onDestroy } from 'svelte';
 	import {
 		EventLog,
 		LoginButton,
@@ -11,29 +12,32 @@
 		idToken,
 		isAuthenticated,
 		isLoading,
-		userInfo
+		userInfo,
 	} from '@dopry/svelte-oidc';
+	import OidcBachannelLogoutHandler from '../components/OidcBachannelLogoutHandler.svelte';
 
 	const metadata = {};
 </script>
 
-{#if browser}
-	<OidcContext
-		issuer="http://localhost:8000/o"
-		client_id="2EIxgjlyy5VgCp2fjhEpKLyRtSMMPK0hZ0gBpNdm"
-		redirect_uri="http://localhost:5173"
-		post_logout_redirect_uri="http://localhost:5173"
-		{metadata}
-		scope="openid"
-		extraOptions={{
-			mergeClaims: true
-		}}
-	>
+	{#if browser}
+		<OidcContext
+			issuer="http://localhost:8000/o"
+			client_id="2EIxgjlyy5VgCp2fjhEpKLyRtSMMPK0hZ0gBpNdm"
+			redirect_uri="http://localhost:5173"
+			post_logout_redirect_uri="http://localhost:5173"
+			{metadata}
+			scope="openid"
+			extraOptions={{
+				mergeClaims: true
+			}}
+		>
+		<OidcBachannelLogoutHandler />
 		<div class="row">
 			<div class="col s12">
 				<LoginButton>Login</LoginButton>
 				<LogoutButton>Logout</LogoutButton>
 				<RefreshTokenButton>refreshToken</RefreshTokenButton>
+				<a href="http://localhost:8000/admin">IDP Admin</a>
 			</div>
 		</div>
 		<div class="row">
@@ -80,5 +84,5 @@
 				<EventLog />
 			</div>
 		</div>
-	</OidcContext>
-{/if}
+		</OidcContext>
+	{/if}

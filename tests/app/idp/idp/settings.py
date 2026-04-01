@@ -213,6 +213,8 @@ OAUTH2_PROVIDER = {
         "openid": "OpenID Connect scope",
     },
     "ALLOWED_SCHEMES": env("OAUTH2_PROVIDER_ALLOWED_SCHEMES"),
+    "OIDC_BACKCHANNEL_LOGOUT_ENABLED": True,
+    "OIDC_ISS_ENDPOINT": "http://localhost:8000",
 }
 # needs to be set to allow cors requests from the test app, along with ALLOWED_SCHEMES=["http"]
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = env("OAUTHLIB_INSECURE_TRANSPORT")
@@ -244,3 +246,5 @@ LOGGING = {
         # },
     },
 }
+
+
