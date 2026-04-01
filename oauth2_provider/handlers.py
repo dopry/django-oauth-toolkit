@@ -75,7 +75,7 @@ def send_backchannel_logout_request(id_token, *args, **kwargs):
         )
         response.raise_for_status()
     except requests.RequestException as exc:
-        raise BackchannelLogoutRequestError(str(exc))
+        raise BackchannelLogoutRequestError(str(exc)) from exc
 
 
 @receiver(user_logged_out)
