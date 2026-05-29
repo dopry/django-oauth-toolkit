@@ -21,7 +21,6 @@ jobs:
         - '3.12'
         - '3.13'
         django-version:
-        - '4.2'
         - '5.0'
         - '5.1'
         - '5.2'
@@ -36,7 +35,6 @@ jobs:
           - { django-version: '6.0', python-version: '3.14' }
           - { django-version: 'main', python-version: '3.14' }
         exclude:
-          - { django-version: '4.2', python-version: '3.13' }
           - { django-version: '5.0', python-version: '3.13' }
           - { django-version: 'main', python-version: '3.10' }
           - { django-version: 'main', python-version: '3.11' }
@@ -167,7 +165,7 @@ jobs:
         run: python -m pip install --upgrade tox
 
       - name: Run multi-db tests
-        run: tox -e py312-dj42-multi-db
+        run: tox -e py314-dj52-multi-db
 
   test-demo-rp:
     name: Test Demo Relying Party
@@ -229,9 +227,7 @@ jobs:
       - sphinxlint
       - migrations
       - migrate_swapped
-      # nees to fix multidb tests, not blocking success for now 
-      # so we can get the lint and migrations checks in place. 
-      # - multi-db
+      - multi-db
     runs-on: ubuntu-latest
     name: Test successful
     steps:
