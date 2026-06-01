@@ -12,7 +12,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": ":memory:",
     },
-    # Keep ``default`` concrete so Django's test harness can use standard multi-db
+    # Keep ``default`` concrete so Django's test harness can use standard mdb
     # setup while routers still drive real model placement to alpha/beta.
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

@@ -1,4 +1,4 @@
-from .multi_db_settings import *  # noqa: F401, F403
+from .sqlite_mdb_settings import *  # noqa: F401, F403
 
 
 OAUTH2_PROVIDER = {
